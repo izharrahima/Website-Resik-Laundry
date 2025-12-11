@@ -1,0 +1,1945 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resik Laundry Manager - Sistem Akuntansi Lengkap</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      height: 100%;
+    }
+    html {
+      height: 100%;
+    }
+    #app {
+      width: 100%;
+      min-height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .container-wrapper {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 0.95rem;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #059669;
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+    .btn-info {
+      background: #0ea5e9;
+      color: white;
+    }
+    .btn-info:hover {
+      background: #0284c7;
+    }
+    .input-field {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.3s ease;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .nav-tab {
+      padding: 0.75rem 1.25rem;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      color: #64748b;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+    .nav-tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+    .nav-tab:hover {
+      color: #667eea;
+    }
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th {
+      background: #f8fafc;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: #334155;
+      border-bottom: 2px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      color: #475569;
+    }
+    tr:hover {
+      background: #f8fafc;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .badge-warning {
+      background: #fed7aa;
+      color: #92400e;
+    }
+    .badge-info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    .badge-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #334155;
+      font-size: 0.9rem;
+    }
+    .item-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .item-checkbox {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .item-checkbox:hover {
+      border-color: #667eea;
+      background: #f8fafc;
+    }
+    .item-checkbox input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+    .summary-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .summary-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 0.5rem;
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    .report-section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .report-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .financial-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .financial-row.bold {
+      font-weight: 700;
+      border-top: 2px solid #334155;
+      border-bottom: 2px solid #334155;
+      margin-top: 0.5rem;
+    }
+    .text-right {
+      text-align: right;
+    }
+    .text-left {
+      text-align: left;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body>
+  <div id="app">
+   <div class="container-wrapper"><!-- Header -->
+    <header class="card" style="text-align: center; background: white;">
+     <h1 id="app-title" style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;">Resik Laundry</h1>
+     <p id="business-name" style="color: #64748b;">Sistem Akuntansi Lengkap</p>
+    </header><!-- Navigation Tabs -->
+    <div class="card">
+     <nav class="nav-tabs"><button class="nav-tab active" data-tab="dashboard">Dashboard</button> <button class="nav-tab" data-tab="transaksi">Transaksi</button> <button class="nav-tab" data-tab="pengeluaran">Pengeluaran</button> <button class="nav-tab" data-tab="aset">Pembelian Aset</button> <button class="nav-tab" data-tab="jurnal">Jurnal Umum</button> <button class="nav-tab" data-tab="laba-rugi">Laba Rugi</button> <button class="nav-tab" data-tab="perubahan-modal">Perubahan Modal</button> <button class="nav-tab" data-tab="neraca">Neraca</button> <button class="nav-tab" data-tab="download">Download PDF</button>
+     </nav><!-- Dashboard Tab -->
+     <div id="tab-dashboard" class="tab-content">
+      <div class="summary-card">
+       <div style="font-size: 1.1rem; opacity: 0.9;">
+        Total Transaksi
+       </div>
+       <div class="summary-value" id="total-transactions">
+        0
+       </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+       <div class="card" style="background: #f0f9ff; border: 2px solid #0ea5e9;">
+        <div style="color: #0369a1; font-weight: 600; margin-bottom: 0.5rem;">
+         Total Pendapatan
+        </div>
+        <div style="font-size: 1.75rem; font-weight: 700; color: #0c4a6e;" id="total-income">
+         Rp 0
+        </div>
+       </div>
+       <div class="card" style="background: #fef3c7; border: 2px solid #f59e0b;">
+        <div style="color: #92400e; font-weight: 600; margin-bottom: 0.5rem;">
+         Total Pengeluaran
+        </div>
+        <div style="font-size: 1.75rem; font-weight: 700; color: #78350f;" id="total-expenses">
+         Rp 0
+        </div>
+       </div>
+       <div class="card" style="background: #f0fdf4; border: 2px solid #10b981;">
+        <div style="color: #065f46; font-weight: 600; margin-bottom: 0.5rem;">
+         Laba Bersih
+        </div>
+        <div style="font-size: 1.75rem; font-weight: 700; color: #064e3b;" id="net-profit">
+         Rp 0
+        </div>
+       </div>
+      </div>
+     </div><!-- Transaksi Tab -->
+     <div id="tab-transaksi" class="tab-content" style="display: none;">
+      <h3 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem;">Transaksi Baru</h3>
+      <form id="transaction-form">
+       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <div class="form-group"><label for="customer-name" class="form-label">Nama Pelanggan</label> <input type="text" id="customer-name" class="input-field" required placeholder="Masukkan nama pelanggan">
+        </div>
+        <div class="form-group"><label for="phone" class="form-label">No. Telepon</label> <input type="tel" id="phone" class="input-field" required placeholder="08123456789">
+        </div>
+        <div class="form-group"><label for="service-type" class="form-label">Jenis Layanan</label> <select id="service-type" class="input-field" required> <option value="">Pilih layanan</option> <option value="cuci komplit">Cuci Komplit</option> <option value="cuci kering">Cuci Kering</option> <option value="cuci kering lipat">Cuci Kering Lipat</option> <option value="hanya setrika">Hanya Setrika</option> <option value="satuan">Satuan</option> </select>
+        </div>
+        <div class="form-group" id="member-type-group"><label for="member-type" class="form-label">Jenis Member</label> <select id="member-type" class="input-field" required> <option value="">Pilih jenis member</option> </select>
+        </div>
+        <div class="form-group" id="weight-group"><label for="weight" class="form-label">Berat (kg)</label> <input type="number" id="weight" class="input-field" min="0" step="0.1" placeholder="0">
+        </div>
+        <div class="form-group"><label for="payment-status" class="form-label">Status Pembayaran</label> <select id="payment-status" class="input-field" required> <option value="lunas">Lunas</option> <option value="belum lunas">Belum Lunas</option> </select>
+        </div>
+       </div>
+       <div id="satuan-items" style="display: none;"><label class="form-label">Pilih Item Satuan</label>
+        <div class="item-selector" id="item-checkboxes"></div>
+       </div>
+       <div style="margin-top: 1.5rem; padding: 1.5rem; background: #f8fafc; border-radius: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"><span style="font-weight: 700; color: #334155; font-size: 1.1rem;">Harga per Kg:</span> <span style="font-size: 1.5rem; font-weight: 700; color: #667eea;" id="price-display">Rp 0</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-weight: 700; color: #334155; font-size: 1.25rem;">TOTAL:</span> <span style="font-size: 2rem; font-weight: 700; color: #10b981;" id="total-display">Rp 0</span>
+        </div>
+       </div>
+       <div style="display: flex; gap: 1rem; margin-top: 1.5rem;"><button type="submit" class="btn btn-primary" id="submit-btn" style="flex: 1;"> Simpan Transaksi </button> <button type="button" class="btn btn-secondary" id="reset-btn"> Reset Form </button>
+       </div>
+      </form>
+      <h3 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 2rem; margin-bottom: 1rem;">Riwayat Transaksi</h3>
+      <div class="table-container">
+       <table>
+        <thead>
+         <tr>
+          <th>Tanggal</th>
+          <th>Pelanggan</th>
+          <th>Telepon</th>
+          <th>Layanan</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Aksi</th>
+         </tr>
+        </thead>
+        <tbody id="transaction-table-body">
+         <tr>
+          <td colspan="7" style="text-align: center; padding: 2rem; color: #94a3b8;">Belum ada transaksi</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div><!-- Pengeluaran Tab -->
+     <div id="tab-pengeluaran" class="tab-content" style="display: none;">
+      <h3 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem;">Input Pengeluaran</h3>
+      <form id="expense-form">
+       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <div class="form-group"><label for="expense-date" class="form-label">Tanggal</label> <input type="date" id="expense-date" class="input-field" required>
+        </div>
+        <div class="form-group"><label for="expense-category" class="form-label">Kategori</label> <select id="expense-category" class="input-field" required> <option value="">Pilih kategori</option> <option value="Beban Gaji">Beban Gaji</option> <option value="Beban Listrik">Beban Listrik</option> <option value="Beban Air">Beban Air</option> <option value="Beban Bahan Baku">Beban Bahan Baku (Deterjen, Pewangi)</option> <option value="Beban Perawatan">Beban Perawatan Mesin</option> <option value="Beban Sewa">Beban Sewa Tempat</option> <option value="Beban Transportasi">Beban Transportasi</option> <option value="Beban Promosi">Beban Promosi</option> <option value="Beban Administrasi">Beban Administrasi</option> <option value="Beban Lain-lain">Beban Lain-lain</option> </select>
+        </div>
+        <div class="form-group"><label for="expense-amount" class="form-label">Jumlah (Rp)</label> <input type="number" id="expense-amount" class="input-field" required min="0" step="1000" placeholder="0">
+        </div>
+       </div>
+       <div class="form-group"><label for="expense-description" class="form-label">Keterangan</label> <textarea id="expense-description" class="input-field" rows="3" required placeholder="Deskripsi pengeluaran"></textarea>
+       </div>
+       <div style="display: flex; gap: 1rem; margin-top: 1.5rem;"><button type="submit" class="btn btn-success" id="expense-submit-btn" style="flex: 1;"> Simpan Pengeluaran </button> <button type="button" class="btn btn-secondary" id="expense-reset-btn"> Reset Form </button>
+       </div>
+      </form>
+      <h3 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 2rem; margin-bottom: 1rem;">Riwayat Pengeluaran</h3>
+      <div class="table-container">
+       <table>
+        <thead>
+         <tr>
+          <th>Tanggal</th>
+          <th>Kategori</th>
+          <th>Keterangan</th>
+          <th>Jumlah</th>
+          <th>Aksi</th>
+         </tr>
+        </thead>
+        <tbody id="expense-table-body">
+         <tr>
+          <td colspan="5" style="text-align: center; padding: 2rem; color: #94a3b8;">Belum ada pengeluaran</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div><!-- Pembelian Aset Tab -->
+     <div id="tab-aset" class="tab-content" style="display: none;">
+      <h3 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem;">Pembelian Aset</h3>
+      <form id="asset-form">
+       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <div class="form-group"><label for="asset-date" class="form-label">Tanggal Pembelian</label> <input type="date" id="asset-date" class="input-field" required>
+        </div>
+        <div class="form-group"><label for="asset-type" class="form-label">Jenis Aset</label> <select id="asset-type" class="input-field" required> <option value="">Pilih jenis aset</option> <option value="Perlengkapan">Perlengkapan</option> <option value="Peralatan">Peralatan</option> </select>
+        </div>
+        <div class="form-group"><label for="asset-category" class="form-label">Kategori</label> <select id="asset-category" class="input-field" required> <option value="">Pilih kategori</option> </select>
+        </div>
+        <div class="form-group"><label for="asset-amount" class="form-label">Harga Beli (Rp)</label> <input type="number" id="asset-amount" class="input-field" required min="0" step="1000" placeholder="0">
+        </div>
+       </div>
+       <div class="form-group"><label for="asset-description" class="form-label">Keterangan</label> <textarea id="asset-description" class="input-field" rows="3" required placeholder="Nama item, merek, spesifikasi, dll"></textarea>
+       </div>
+       <div style="display: flex; gap: 1rem; margin-top: 1.5rem;"><button type="submit" class="btn btn-info" id="asset-submit-btn" style="flex: 1;"> Simpan Pembelian Aset </button> <button type="button" class="btn btn-secondary" id="asset-reset-btn"> Reset Form </button>
+       </div>
+      </form>
+      <h3 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 2rem; margin-bottom: 1rem;">Riwayat Pembelian Aset</h3>
+      <div class="table-container">
+       <table>
+        <thead>
+         <tr>
+          <th>Tanggal</th>
+          <th>Jenis</th>
+          <th>Kategori</th>
+          <th>Keterangan</th>
+          <th>Harga Beli</th>
+          <th>Aksi</th>
+         </tr>
+        </thead>
+        <tbody id="asset-table-body">
+         <tr>
+          <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">Belum ada pembelian aset</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div><!-- Jurnal Umum Tab -->
+     <div id="tab-jurnal" class="tab-content" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+       <h3 style="font-size: 1.5rem; font-weight: 700; color: #1e293b;">Jurnal Umum</h3>
+      </div>
+      <div class="table-container">
+       <table>
+        <thead>
+         <tr>
+          <th>Tanggal</th>
+          <th>Keterangan</th>
+          <th>Akun Debit</th>
+          <th>Akun Kredit</th>
+          <th>Debit (Rp)</th>
+          <th>Kredit (Rp)</th>
+         </tr>
+        </thead>
+        <tbody id="journal-table-body">
+         <tr>
+          <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">Belum ada jurnal</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div><!-- Laba Rugi Tab -->
+     <div id="tab-laba-rugi" class="tab-content" style="display: none;">
+      <div class="report-section">
+       <div class="report-title" id="report-company-name-lr">
+        RESIK LAUNDRY
+       </div>
+       <div style="text-align: center; font-weight: 600; margin-bottom: 0.5rem;">
+        LAPORAN LABA RUGI
+       </div>
+       <div style="text-align: center; color: #64748b; margin-bottom: 2rem;" id="report-period-lr">
+        Periode: Januari - Desember 2024
+       </div>
+       <div id="income-statement-content"></div>
+      </div>
+     </div><!-- Perubahan Modal Tab -->
+     <div id="tab-perubahan-modal" class="tab-content" style="display: none;">
+      <div class="report-section">
+       <div class="report-title" id="report-company-name-pm">
+        RESIK LAUNDRY
+       </div>
+       <div style="text-align: center; font-weight: 600; margin-bottom: 0.5rem;">
+        LAPORAN PERUBAHAN MODAL
+       </div>
+       <div style="text-align: center; color: #64748b; margin-bottom: 2rem;" id="report-period-pm">
+        Periode: Januari - Desember 2024
+       </div>
+       <div id="equity-statement-content"></div>
+      </div>
+     </div><!-- Neraca Tab -->
+     <div id="tab-neraca" class="tab-content" style="display: none;">
+      <div class="report-section">
+       <div class="report-title" id="report-company-name-bs">
+        RESIK LAUNDRY
+       </div>
+       <div style="text-align: center; font-weight: 600; margin-bottom: 0.5rem;">
+        NERACA (LAPORAN POSISI KEUANGAN)
+       </div>
+       <div style="text-align: center; color: #64748b; margin-bottom: 2rem;" id="report-period-bs">
+        Per 31 Desember 2024
+       </div>
+       <div id="balance-sheet-content"></div>
+      </div>
+     </div><!-- Download PDF Tab -->
+     <div id="tab-download" class="tab-content" style="display: none;">
+      <div style="text-align: center; padding: 3rem;">
+       <div style="font-size: 3rem; margin-bottom: 1rem;">
+        📄
+       </div>
+       <h3 style="font-size: 1.75rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem;">Download Laporan Keuangan</h3>
+       <p style="color: #64748b; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Unduh semua laporan keuangan lengkap dalam satu file PDF. Laporan mencakup: Jurnal Umum, Laba Rugi, Perubahan Modal, dan Neraca sesuai PSAK.</p><button id="download-pdf-btn" class="btn btn-info" style="font-size: 1.1rem; padding: 1rem 2rem;"> 📥 Download Laporan Lengkap (PDF) </button>
+       <div id="download-status" style="margin-top: 1.5rem; color: #64748b;"></div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    /*
+      DEBUG HELPERS
+      - global error & unhandledRejection handlers for clearer console output
+      - visual error banner so runtime errors are visible when DevTools not open
+      - ?debug=1 or ?verbose=1 flag that will trigger 'debugger' at startup
+    */
+    (function enableDebugHelpers(){
+      try {
+        const params = new URLSearchParams(location.search);
+        window.__DEBUG_MODE = params.get('debug') || params.get('verbose') ? true : false;
+
+        function createBanner() {
+          const id = '__debug_banner__';
+          let el = document.getElementById(id);
+          if (!el) {
+            el = document.createElement('div');
+            el.id = id;
+            el.style.position = 'fixed';
+            el.style.right = '12px';
+            el.style.bottom = '12px';
+            el.style.padding = '10px 14px';
+            el.style.background = 'rgba(255,40,40,0.92)';
+            el.style.color = 'white';
+            el.style.fontWeight = '700';
+            el.style.borderRadius = '8px';
+            el.style.zIndex = 99999;
+            el.style.maxWidth = '420px';
+            el.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
+            document.body.appendChild(el);
+          }
+          return el;
+        }
+
+        window.showDebugError = function(message) {
+          try {
+            const b = createBanner();
+            b.textContent = typeof message === 'string' ? message : (typeof message === 'object' ? JSON.stringify(message).slice(0,400) : String(message));
+            setTimeout(() => { try { if (b && b.parentNode) b.parentNode.removeChild(b); } catch(e){} }, 8000);
+          } catch (e) { console.error('failed showDebugError', e); }
+        };
+
+        window.addEventListener('error', function (ev) {
+          console.error('[GLOBAL ERROR]', ev.message, ev.filename + ':' + ev.lineno, ev.error);
+          if (!window.__DEBUG_MODE) window.showDebugError(ev.message || 'Terjadi error di halaman');
+        });
+
+        window.addEventListener('unhandledrejection', (ev) => {
+          console.error('[UNHANDLED PROMISE REJECTION]', ev.reason);
+          if (!window.__DEBUG_MODE) window.showDebugError(String(ev.reason || 'Unhandled promise rejection'));
+        });
+
+        if (window.__DEBUG_MODE) {
+          console.log('%cDEBUG MODE: verbose logs ON — add ?debug=1 or ?verbose=1 to URL to break into debugger', 'background:#222;color:#bada55;padding:6px;border-radius:4px');
+        }
+      } catch (e) { console.error('failed to setup debug helpers', e); }
+    })();
+    (function ensureSdks() {
+      if (typeof window.dataSdk === 'undefined') {
+        window.dataSdk = (function () {
+          const STORAGE_KEY = 'resik_data_records_v1';
+          let handler = null;
+          let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+          function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(records)); }
+          function clone(v) { return JSON.parse(JSON.stringify(v)); }
+          function ensureBackendId(rec) {
+            if (!rec.__backendId) rec.__backendId = 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+            return rec;
+          }
+
+          return {
+            init(h) {
+              handler = h;
+                if (window.__DEBUG_MODE) console.info('[dataSdk] init (local fallback) handler installed');
+                if (handler && typeof handler.onDataChanged === 'function') handler.onDataChanged(records.map(clone));
+              return Promise.resolve({ isOk: true });
+            },
+            create(rec) {
+              return new Promise(resolve => {
+                const r = ensureBackendId(clone(rec));
+                records.push(r);
+                persist();
+                if (handler && typeof handler.onDataChanged === 'function') handler.onDataChanged(records.map(clone));
+                resolve({ isOk: true, data: r });
+              });
+            },
+            delete(rec) {
+              return new Promise(resolve => {
+                const idx = records.findIndex(x => x.__backendId === rec.__backendId || x.id === rec.id);
+                if (idx >= 0) {
+                  records.splice(idx, 1);
+                  persist();
+                  if (handler && typeof handler.onDataChanged === 'function') handler.onDataChanged(records.map(clone));
+                  resolve({ isOk: true });
+                } else {
+                  resolve({ isOk: false });
+                }
+              });
+            },
+            getAll() { return Promise.resolve(records.map(clone)); }
+          };
+        })();
+      }
+
+      if (typeof window.elementSdk === 'undefined') {
+        window.elementSdk = (function () {
+          let cfg = {};
+          return {
+            init(opts) { cfg = opts || cfg; if (window.__DEBUG_MODE) console.info('[elementSdk] init (local fallback)'); if (opts && typeof opts.onConfigChange === 'function') opts.onConfigChange(cfg); },
+            setConfig(obj) { cfg = { ...cfg, ...obj }; if (window.__DEBUG_MODE) console.info('[elementSdk] setConfig', obj); }
+          };
+        })();
+      }
+    })();
+    // Service configuration
+    const SERVICE_PRICES = {
+      'cuci komplit': { reguler: 5500, ekspress: 7000, kilat: 9000 },
+      'cuci kering': { reguler: 3000, ekspress: 4500, kilat: 6000 },
+      'cuci kering lipat': { reguler: 4000, ekspress: 6000, kilat: 8000 },
+      'hanya setrika': { reguler: 4000, ekspress: 6000, kilat: 8000 },
+    };
+
+    const MEMBER_TYPES = [
+      { key: 'reguler', label: 'Reguler (2 hari)' },
+      { key: 'ekspress', label: 'Ekspress (1 hari)' },
+      { key: 'kilat', label: 'Kilat (3 jam)' },
+    ];
+
+    const SATUAN_ITEMS = [
+      { key: 'Badcover Besar', price: 25000 },
+      { key: 'Badcover Kecil', price: 20000 },
+      { key: 'Selimut Besar', price: 25000 },
+      { key: 'Selimut Kecil', price: 10000 },
+      { key: 'Sprei Besar', price: 20000 },
+      { key: 'Sprei Sedang', price: 20000 },
+      { key: 'Sprei Kecil', price: 10000 },
+      { key: 'Gorden Besar', price: 30000 },
+      { key: 'Gorden Kecil', price: 15000 },
+      { key: 'Tikar Besar', price: 50000 },
+      { key: 'Tikar Kecil', price: 30000 },
+      { key: 'Boneka Besar', price: 50000 },
+      { key: 'Boneka Sedang', price: 30000 },
+      { key: 'Boneka Kecil', price: 20000 },
+      { key: 'Topi', price: 5000 },
+    ];
+
+    const ASSET_CATEGORIES = {
+      'Perlengkapan': [
+        'Deterjen',
+        'Pewangi Pakaian',
+        'Pelembut Pakaian',
+        'Pemutih',
+        'Sabun Cuci',
+        'Pewangi Ruangan',
+        'Kantong Plastik',
+        'Gantungan Baju',
+        'Tali Jemuran',
+        'Keranjang Cucian',
+        'Lap/Kain Pel',
+        'Sapu & Pel',
+        'Alat Tulis & Administrasi',
+        'Perlengkapan Lainnya'
+      ],
+      'Peralatan': [
+        'Mesin Cuci',
+        'Mesin Pengering',
+        'Setrika Uap',
+        'Setrika Biasa',
+        'Meja Setrika',
+        'Rak Pakaian',
+        'Lemari Penyimpanan',
+        'Timbangan Digital',
+        'Komputer/Laptop',
+        'Printer',
+        'AC/Kipas Angin',
+        'Etalase/Display',
+        'CCTV',
+        'Peralatan Lainnya'
+      ]
+    };
+
+    // Configuration
+    const defaultConfig = {
+      app_title: 'Resik Laundry',
+      business_name: 'Sistem Akuntansi Lengkap',
+      owner_name: 'Pemilik',
+      initial_capital: '10000000',
+      background_color: '#667eea',
+      primary_action_color: '#667eea',
+      text_color: '#1e293b'
+    };
+
+    let config = { ...defaultConfig };
+    let currentTab = 'dashboard';
+    let allRecords = [];
+    let isLoading = false;
+
+    // Data SDK Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        if (window.__DEBUG_MODE) console.info('[dataHandler] onDataChanged — received', Array.isArray(data) ? data.length : typeof data);
+        allRecords = data.sort((a, b) => 
+          new Date(b.created_at) - new Date(a.created_at)
+        );
+        updateUI();
+      }
+    };
+
+    // Initialize SDKs
+    async function initializeApp() {
+      if (window.__DEBUG_MODE) {
+        try { debugger; } catch (e) { /* ignore */ }
+        console.groupCollapsed('[initializeApp] start');
+        console.info('dataHandler ready, attempting dataSdk.init');
+      }
+      try {
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          showToast('Gagal menginisialisasi aplikasi', 'error');
+          if (window.__DEBUG_MODE) console.error('[initializeApp] dataSdk.init failed', initResult);
+          return;
+        }
+
+      if (window.elementSdk) {
+        if (window.__DEBUG_MODE) console.info('elementSdk detected, calling init');
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (newConfig) => {
+            config = { ...newConfig };
+            updateConfigUI();
+          },
+          mapToCapabilities: (cfg) => ({
+            recolorables: [
+              {
+                get: () => cfg.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  cfg.background_color = value;
+                  window.elementSdk.setConfig({ background_color: value });
+                }
+              },
+              {
+                get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
+                set: (value) => {
+                  cfg.primary_action_color = value;
+                  window.elementSdk.setConfig({ primary_action_color: value });
+                }
+              },
+              {
+                get: () => cfg.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  cfg.text_color = value;
+                  window.elementSdk.setConfig({ text_color: value });
+                }
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ['app_title', cfg.app_title || defaultConfig.app_title],
+            ['business_name', cfg.business_name || defaultConfig.business_name],
+            ['owner_name', cfg.owner_name || defaultConfig.owner_name],
+            ['initial_capital', cfg.initial_capital || defaultConfig.initial_capital]
+          ])
+        });
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('expense-date').value = today;
+      document.getElementById('asset-date').value = today;
+
+      setupEventListeners();
+      initializeSatuanItems();
+      updateUI();
+    } catch (err) {
+      console.error('[initializeApp] unexpected error', err);
+      window.showDebugError && window.showDebugError(err && err.message ? err.message : String(err));
+    } finally {
+      if (window.__DEBUG_MODE) { console.info('[initializeApp] end'); console.groupEnd(); }
+    }
+    }
+
+    function updateConfigUI() {
+      const appElement = document.getElementById('app');
+      appElement.style.background = `linear-gradient(135deg, ${config.background_color} 0%, ${adjustColor(config.background_color, -20)} 100%)`;
+      
+      document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
+      document.getElementById('business-name').textContent = config.business_name || defaultConfig.business_name;
+      
+      document.querySelectorAll('.btn-primary').forEach(btn => {
+        btn.style.background = config.primary_action_color || defaultConfig.primary_action_color;
+      });
+      
+      document.querySelectorAll('h1, h3, h4, .form-label, th').forEach(el => {
+        el.style.color = config.text_color || defaultConfig.text_color;
+      });
+
+      document.querySelectorAll('[id^="report-company-name"]').forEach(el => {
+        el.textContent = (config.app_title || defaultConfig.app_title).toUpperCase();
+      });
+    }
+
+    function adjustColor(color, amount) {
+      const num = parseInt(color.replace('#', ''), 16);
+      const r = Math.max(0, Math.min(255, (num >> 16) + amount));
+      const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amount));
+      const b = Math.max(0, Math.min(255, (num & 0x0000FF) + amount));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    }
+
+    function setupEventListeners() {
+      if (window.__DEBUG_MODE) console.info('[setupEventListeners] registering UI event handlers');
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabName = tab.dataset.tab;
+          switchTab(tabName);
+        });
+      });
+
+      document.getElementById('service-type').addEventListener('change', handleServiceTypeChange);
+      document.getElementById('member-type').addEventListener('change', updatePriceDisplay);
+      document.getElementById('weight').addEventListener('input', updatePriceDisplay);
+      document.getElementById('transaction-form').addEventListener('submit', handleTransactionSubmit);
+      document.getElementById('reset-btn').addEventListener('click', resetTransactionForm);
+      
+      document.getElementById('expense-form').addEventListener('submit', handleExpenseSubmit);
+      document.getElementById('expense-reset-btn').addEventListener('click', resetExpenseForm);
+      
+      document.getElementById('asset-type').addEventListener('change', handleAssetTypeChange);
+      document.getElementById('asset-form').addEventListener('submit', handleAssetSubmit);
+      document.getElementById('asset-reset-btn').addEventListener('click', resetAssetForm);
+      
+      document.getElementById('download-pdf-btn').addEventListener('click', generatePDF);
+    }
+
+    function switchTab(tabName) {
+      currentTab = tabName;
+      
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.dataset.tab === tabName) {
+          tab.classList.add('active');
+        }
+      });
+
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.style.display = 'none';
+      });
+
+      document.getElementById(`tab-${tabName}`).style.display = 'block';
+
+      if (['dashboard', 'jurnal', 'laba-rugi', 'perubahan-modal', 'neraca'].includes(tabName)) {
+        updateUI();
+      }
+    }
+
+    function handleServiceTypeChange(e) {
+      const serviceType = e.target.value;
+      const memberTypeGroup = document.getElementById('member-type-group');
+      const weightGroup = document.getElementById('weight-group');
+      const satuanItems = document.getElementById('satuan-items');
+      const memberTypeSelect = document.getElementById('member-type');
+      const weightInput = document.getElementById('weight');
+
+      if (serviceType === 'satuan') {
+        satuanItems.style.display = 'block';
+        memberTypeGroup.style.display = 'none';
+        weightGroup.style.display = 'none';
+        memberTypeSelect.value = '';
+        memberTypeSelect.removeAttribute('required');
+        weightInput.value = '';
+        weightInput.removeAttribute('required');
+      } else if (serviceType && SERVICE_PRICES[serviceType]) {
+        satuanItems.style.display = 'none';
+        memberTypeGroup.style.display = 'block';
+        weightGroup.style.display = 'block';
+        memberTypeSelect.setAttribute('required', 'required');
+        weightInput.setAttribute('required', 'required');
+        
+        memberTypeSelect.innerHTML = '<option value="">Pilih jenis member</option>';
+        MEMBER_TYPES.forEach(type => {
+          const price = SERVICE_PRICES[serviceType][type.key];
+          const option = document.createElement('option');
+          option.value = type.key;
+          option.textContent = `${type.label} - Rp ${price.toLocaleString('id-ID')}/kg`;
+          memberTypeSelect.appendChild(option);
+        });
+
+        document.querySelectorAll('#item-checkboxes input[type="checkbox"]').forEach(cb => {
+          cb.checked = false;
+        });
+      } else {
+        satuanItems.style.display = 'none';
+        memberTypeGroup.style.display = 'block';
+        weightGroup.style.display = 'block';
+        memberTypeSelect.innerHTML = '<option value="">Pilih jenis member</option>';
+      }
+
+      updatePriceDisplay();
+    }
+
+    function initializeSatuanItems() {
+      const container = document.getElementById('item-checkboxes');
+      container.innerHTML = '';
+
+      SATUAN_ITEMS.forEach(item => {
+        const label = document.createElement('label');
+        label.className = 'item-checkbox';
+        label.innerHTML = `
+          <input type="checkbox" value="${item.key}" data-price="${item.price}">
+          <div>
+            <div style="font-weight: 600; color: #334155;">${item.key}</div>
+            <div style="font-size: 0.85rem; color: #64748b;">Rp ${item.price.toLocaleString('id-ID')}</div>
+          </div>
+        `;
+        container.appendChild(label);
+
+        label.querySelector('input').addEventListener('change', updatePriceDisplay);
+      });
+    }
+
+    function updatePriceDisplay() {
+      const serviceType = document.getElementById('service-type').value;
+      const memberType = document.getElementById('member-type').value;
+      const weight = parseFloat(document.getElementById('weight').value) || 0;
+      const priceDisplay = document.getElementById('price-display');
+      const totalDisplay = document.getElementById('total-display');
+
+      let pricePerKg = 0;
+      let total = 0;
+
+      if (serviceType === 'satuan') {
+        const checkedItems = document.querySelectorAll('#item-checkboxes input[type="checkbox"]:checked');
+        checkedItems.forEach(item => {
+          total += parseFloat(item.dataset.price);
+        });
+        priceDisplay.textContent = 'Rp 0';
+      } else if (serviceType && memberType && SERVICE_PRICES[serviceType]) {
+        pricePerKg = SERVICE_PRICES[serviceType][memberType];
+        total = pricePerKg * weight;
+        priceDisplay.textContent = `Rp ${pricePerKg.toLocaleString('id-ID')}`;
+      } else {
+        priceDisplay.textContent = 'Rp 0';
+      }
+
+      totalDisplay.textContent = `Rp ${Math.round(total).toLocaleString('id-ID')}`;
+    }
+
+    async function handleTransactionSubmit(e) {
+      e.preventDefault();
+
+      if (isLoading) return;
+
+      if (allRecords.length >= 999) {
+        showToast('Maksimum 999 data tercapai. Hapus beberapa data terlebih dahulu.', 'error');
+        return;
+      }
+
+      const serviceType = document.getElementById('service-type').value;
+      const memberType = document.getElementById('member-type').value;
+      const weight = parseFloat(document.getElementById('weight').value) || 0;
+      
+      let items = [];
+      let pricePerKg = 0;
+      let totalAmount = 0;
+
+      if (serviceType === 'satuan') {
+        const checkedItems = document.querySelectorAll('#item-checkboxes input[type="checkbox"]:checked');
+        checkedItems.forEach(item => {
+          items.push({
+            name: item.value,
+            price: parseFloat(item.dataset.price)
+          });
+          totalAmount += parseFloat(item.dataset.price);
+        });
+
+        if (items.length === 0) {
+          showToast('Pilih minimal satu item satuan', 'error');
+          return;
+        }
+      } else {
+        if (!memberType || weight <= 0) {
+          showToast('Lengkapi jenis member dan berat', 'error');
+          return;
+        }
+        pricePerKg = SERVICE_PRICES[serviceType][memberType];
+        totalAmount = pricePerKg * weight;
+      }
+
+      const transaction = {
+        type: 'transaction',
+        id: 'TRX' + Date.now(),
+        transaction_date: new Date().toISOString(),
+        customer_name: document.getElementById('customer-name').value,
+        phone: document.getElementById('phone').value,
+        service_type: serviceType,
+        member_type: serviceType === 'satuan' ? '—' : memberType,
+        weight: weight,
+        price_per_kg: pricePerKg,
+        items: JSON.stringify(items),
+        total_amount: Math.round(totalAmount),
+        payment_status: document.getElementById('payment-status').value,
+        description: `Transaksi laundry - ${document.getElementById('customer-name').value}`,
+        category: 'Pendapatan',
+        account_debit: 'Kas',
+        account_credit: 'Pendapatan Jasa Laundry',
+        amount: Math.round(totalAmount),
+        created_at: new Date().toISOString()
+      };
+
+      setLoading('submit-btn', true);
+      const result = await window.dataSdk.create(transaction);
+      setLoading('submit-btn', false);
+
+      if (result.isOk) {
+        showToast('Transaksi berhasil disimpan!', 'success');
+        resetTransactionForm();
+      } else {
+        showToast('Gagal menyimpan transaksi', 'error');
+      }
+    }
+
+    function resetTransactionForm() {
+      document.getElementById('transaction-form').reset();
+      document.getElementById('satuan-items').style.display = 'none';
+      document.getElementById('member-type-group').style.display = 'block';
+      document.getElementById('weight-group').style.display = 'block';
+      document.getElementById('member-type').innerHTML = '<option value="">Pilih jenis member</option>';
+      document.querySelectorAll('#item-checkboxes input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+      });
+      updatePriceDisplay();
+    }
+
+    async function handleExpenseSubmit(e) {
+      e.preventDefault();
+
+      if (isLoading) return;
+
+      if (allRecords.length >= 999) {
+        showToast('Maksimum 999 data tercapai. Hapus beberapa data terlebih dahulu.', 'error');
+        return;
+      }
+
+      const amount = parseFloat(document.getElementById('expense-amount').value);
+      const category = document.getElementById('expense-category').value;
+      const description = document.getElementById('expense-description').value;
+
+      const expense = {
+        type: 'expense',
+        id: 'EXP' + Date.now(),
+        transaction_date: document.getElementById('expense-date').value + 'T00:00:00.000Z',
+        customer_name: '',
+        phone: '',
+        service_type: '',
+        member_type: '',
+        weight: 0,
+        price_per_kg: 0,
+        items: '',
+        total_amount: 0,
+        payment_status: '',
+        description: description,
+        category: category,
+        account_debit: category,
+        account_credit: 'Kas',
+        amount: amount,
+        created_at: new Date().toISOString()
+      };
+
+      setLoading('expense-submit-btn', true);
+      const result = await window.dataSdk.create(expense);
+      setLoading('expense-submit-btn', false);
+
+      if (result.isOk) {
+        showToast('Pengeluaran berhasil disimpan!', 'success');
+        resetExpenseForm();
+      } else {
+        showToast('Gagal menyimpan pengeluaran', 'error');
+      }
+    }
+
+    function resetExpenseForm() {
+      document.getElementById('expense-form').reset();
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('expense-date').value = today;
+    }
+
+    function handleAssetTypeChange(e) {
+      const assetType = e.target.value;
+      const categorySelect = document.getElementById('asset-category');
+      
+      categorySelect.innerHTML = '<option value="">Pilih kategori</option>';
+      
+      if (assetType && ASSET_CATEGORIES[assetType]) {
+        ASSET_CATEGORIES[assetType].forEach(category => {
+          const option = document.createElement('option');
+          option.value = category;
+          option.textContent = category;
+          categorySelect.appendChild(option);
+        });
+      }
+    }
+
+    async function handleAssetSubmit(e) {
+      e.preventDefault();
+
+      if (isLoading) return;
+
+      if (allRecords.length >= 999) {
+        showToast('Maksimum 999 data tercapai. Hapus beberapa data terlebih dahulu.', 'error');
+        return;
+      }
+
+      const assetType = document.getElementById('asset-type').value;
+      const category = document.getElementById('asset-category').value;
+      const amount = parseFloat(document.getElementById('asset-amount').value);
+      const description = document.getElementById('asset-description').value;
+
+      const asset = {
+        type: 'asset',
+        id: 'AST' + Date.now(),
+        transaction_date: document.getElementById('asset-date').value + 'T00:00:00.000Z',
+        customer_name: '',
+        phone: '',
+        service_type: assetType,
+        member_type: category,
+        weight: 0,
+        price_per_kg: 0,
+        items: '',
+        total_amount: amount,
+        payment_status: '',
+        description: description,
+        category: assetType,
+        account_debit: assetType,
+        account_credit: 'Kas',
+        amount: amount,
+        created_at: new Date().toISOString()
+      };
+
+      setLoading('asset-submit-btn', true);
+      const result = await window.dataSdk.create(asset);
+      setLoading('asset-submit-btn', false);
+
+      if (result.isOk) {
+        showToast('Pembelian aset berhasil disimpan!', 'success');
+        resetAssetForm();
+      } else {
+        showToast('Gagal menyimpan pembelian aset', 'error');
+      }
+    }
+
+    function resetAssetForm() {
+      document.getElementById('asset-form').reset();
+      document.getElementById('asset-category').innerHTML = '<option value="">Pilih kategori</option>';
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('asset-date').value = today;
+    }
+
+    function updateUI() {
+      const transactions = allRecords.filter(r => r.type === 'transaction');
+      const expenses = allRecords.filter(r => r.type === 'expense');
+      const assets = allRecords.filter(r => r.type === 'asset');
+
+      const totalIncome = transactions.reduce((sum, t) => sum + t.total_amount, 0);
+      const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+      const totalAssetPurchase = assets.reduce((sum, a) => sum + a.amount, 0);
+      const netProfit = totalIncome - totalExpenses;
+
+      document.getElementById('total-transactions').textContent = transactions.length;
+      document.getElementById('total-income').textContent = `Rp ${totalIncome.toLocaleString('id-ID')}`;
+      document.getElementById('total-expenses').textContent = `Rp ${totalExpenses.toLocaleString('id-ID')}`;
+      document.getElementById('net-profit').textContent = `Rp ${netProfit.toLocaleString('id-ID')}`;
+
+      updateTransactionTable(transactions);
+      updateExpenseTable(expenses);
+      updateAssetTable(assets);
+      updateJournalTable();
+      updateIncomeStatement();
+      updateEquityStatement();
+      updateBalanceSheet();
+    }
+
+    function updateTransactionTable(transactions) {
+      const tbody = document.getElementById('transaction-table-body');
+      tbody.innerHTML = '';
+
+      if (transactions.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem; color: #94a3b8;">
+              Belum ada transaksi
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      transactions.forEach(transaction => {
+        const row = document.createElement('tr');
+        const date = new Date(transaction.transaction_date);
+        const dateStr = date.toLocaleDateString('id-ID', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+
+        row.innerHTML = `
+          <td>${dateStr}</td>
+          <td>${transaction.customer_name}</td>
+          <td>${transaction.phone}</td>
+          <td style="text-transform: capitalize;">${transaction.service_type}</td>
+          <td style="font-weight: 600;">Rp ${transaction.total_amount.toLocaleString('id-ID')}</td>
+          <td>
+            <span class="badge ${transaction.payment_status === 'lunas' ? 'badge-success' : 'badge-warning'}">
+              ${transaction.payment_status === 'lunas' ? 'Lunas' : 'Belum Lunas'}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-id="${transaction.__backendId}">
+              Hapus
+            </button>
+          </td>
+        `;
+
+        const deleteBtn = row.querySelector('button');
+        let confirmTimeout = null;
+        deleteBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const confirmBtn = e.currentTarget;
+          
+          if (confirmBtn.textContent.trim() === 'Hapus') {
+            confirmBtn.textContent = 'Yakin?';
+            confirmBtn.style.background = '#dc2626';
+            confirmTimeout = setTimeout(() => {
+              confirmBtn.textContent = 'Hapus';
+              confirmBtn.style.background = '#ef4444';
+            }, 3000);
+          } else if (confirmBtn.textContent.trim() === 'Yakin?') {
+            if (confirmTimeout) clearTimeout(confirmTimeout);
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="loading-spinner"></span>';
+            await handleDelete(transaction);
+          }
+        });
+
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateExpenseTable(expenses) {
+      const tbody = document.getElementById('expense-table-body');
+      tbody.innerHTML = '';
+
+      if (expenses.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 2rem; color: #94a3b8;">
+              Belum ada pengeluaran
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      expenses.forEach(expense => {
+        const row = document.createElement('tr');
+        const date = new Date(expense.transaction_date);
+        const dateStr = date.toLocaleDateString('id-ID', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+
+        row.innerHTML = `
+          <td>${dateStr}</td>
+          <td><span class="badge badge-danger">${expense.category}</span></td>
+          <td>${expense.description}</td>
+          <td style="font-weight: 600; color: #ef4444;">Rp ${expense.amount.toLocaleString('id-ID')}</td>
+          <td>
+            <button class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-id="${expense.__backendId}">
+              Hapus
+            </button>
+          </td>
+        `;
+
+        const deleteBtn = row.querySelector('button');
+        let confirmTimeout = null;
+        deleteBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const confirmBtn = e.currentTarget;
+          
+          if (confirmBtn.textContent.trim() === 'Hapus') {
+            confirmBtn.textContent = 'Yakin?';
+            confirmBtn.style.background = '#dc2626';
+            confirmTimeout = setTimeout(() => {
+              confirmBtn.textContent = 'Hapus';
+              confirmBtn.style.background = '#ef4444';
+            }, 3000);
+          } else if (confirmBtn.textContent.trim() === 'Yakin?') {
+            if (confirmTimeout) clearTimeout(confirmTimeout);
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="loading-spinner"></span>';
+            await handleDelete(expense);
+          }
+        });
+
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateAssetTable(assets) {
+      const tbody = document.getElementById('asset-table-body');
+      tbody.innerHTML = '';
+
+      if (assets.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">
+              Belum ada pembelian aset
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      assets.forEach(asset => {
+        const row = document.createElement('tr');
+        const date = new Date(asset.transaction_date);
+        const dateStr = date.toLocaleDateString('id-ID', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+
+        row.innerHTML = `
+          <td>${dateStr}</td>
+          <td><span class="badge ${asset.service_type === 'Perlengkapan' ? 'badge-warning' : 'badge-info'}">${asset.service_type}</span></td>
+          <td>${asset.member_type}</td>
+          <td>${asset.description}</td>
+          <td style="font-weight: 600; color: #0ea5e9;">Rp ${asset.amount.toLocaleString('id-ID')}</td>
+          <td>
+            <button class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-id="${asset.__backendId}">
+              Hapus
+            </button>
+          </td>
+        `;
+
+        const deleteBtn = row.querySelector('button');
+        let confirmTimeout = null;
+        deleteBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const confirmBtn = e.currentTarget;
+          
+          if (confirmBtn.textContent.trim() === 'Hapus') {
+            confirmBtn.textContent = 'Yakin?';
+            confirmBtn.style.background = '#dc2626';
+            confirmTimeout = setTimeout(() => {
+              confirmBtn.textContent = 'Hapus';
+              confirmBtn.style.background = '#ef4444';
+            }, 3000);
+          } else if (confirmBtn.textContent.trim() === 'Yakin?') {
+            if (confirmTimeout) clearTimeout(confirmTimeout);
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="loading-spinner"></span>';
+            await handleDelete(asset);
+          }
+        });
+
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateJournalTable() {
+      const tbody = document.getElementById('journal-table-body');
+      tbody.innerHTML = '';
+
+      if (allRecords.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">
+              Belum ada jurnal
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      allRecords.forEach(record => {
+        const row = document.createElement('tr');
+        const date = new Date(record.transaction_date);
+        const dateStr = date.toLocaleDateString('id-ID', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+
+        row.innerHTML = `
+          <td>${dateStr}</td>
+          <td>${record.description}</td>
+          <td>${record.account_debit}</td>
+          <td>${record.account_credit}</td>
+          <td style="font-weight: 600; color: #10b981;">Rp ${record.amount.toLocaleString('id-ID')}</td>
+          <td style="font-weight: 600; color: #ef4444;">Rp ${record.amount.toLocaleString('id-ID')}</td>
+        `;
+
+        tbody.appendChild(row);
+      });
+
+      const totalAmount = allRecords.reduce((sum, r) => sum + r.amount, 0);
+      const totalRow = document.createElement('tr');
+      totalRow.style.fontWeight = '700';
+      totalRow.style.background = '#f8fafc';
+      totalRow.innerHTML = `
+        <td colspan="4" style="text-align: right; font-weight: 700;">TOTAL:</td>
+        <td style="font-weight: 700; color: #10b981;">Rp ${totalAmount.toLocaleString('id-ID')}</td>
+        <td style="font-weight: 700; color: #ef4444;">Rp ${totalAmount.toLocaleString('id-ID')}</td>
+      `;
+      tbody.appendChild(totalRow);
+    }
+
+    function updateIncomeStatement() {
+      const transactions = allRecords.filter(r => r.type === 'transaction');
+      const expenses = allRecords.filter(r => r.type === 'expense');
+
+      const totalRevenue = transactions.reduce((sum, t) => sum + t.total_amount, 0);
+      
+      const expensesByCategory = {};
+      expenses.forEach(e => {
+        expensesByCategory[e.category] = (expensesByCategory[e.category] || 0) + e.amount;
+      });
+      
+      const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+      const netIncome = totalRevenue - totalExpenses;
+
+      let html = `
+        <div style="margin-bottom: 2rem;">
+          <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; color: #334155;">PENDAPATAN</div>
+          <div class="financial-row">
+            <span>Pendapatan Jasa Laundry</span>
+            <span style="font-weight: 600;">Rp ${totalRevenue.toLocaleString('id-ID')}</span>
+          </div>
+          <div class="financial-row bold">
+            <span>Total Pendapatan</span>
+            <span>Rp ${totalRevenue.toLocaleString('id-ID')}</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+          <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; color: #334155;">BEBAN OPERASIONAL</div>
+      `;
+
+      Object.entries(expensesByCategory).forEach(([category, amount]) => {
+        html += `
+          <div class="financial-row">
+            <span>${category}</span>
+            <span style="font-weight: 600;">Rp ${amount.toLocaleString('id-ID')}</span>
+          </div>
+        `;
+      });
+
+      html += `
+          <div class="financial-row bold">
+            <span>Total Beban</span>
+            <span>Rp ${totalExpenses.toLocaleString('id-ID')}</span>
+          </div>
+        </div>
+
+        <div class="financial-row bold" style="background: ${netIncome >= 0 ? '#d1fae5' : '#fee2e2'}; padding: 1rem; border-radius: 8px; font-size: 1.1rem;">
+          <span>LABA ${netIncome >= 0 ? 'BERSIH' : '(RUGI)'}</span>
+          <span style="color: ${netIncome >= 0 ? '#065f46' : '#991b1b'};">Rp ${netIncome.toLocaleString('id-ID')}</span>
+        </div>
+      `;
+
+      document.getElementById('income-statement-content').innerHTML = html;
+    }
+
+    function updateEquityStatement() {
+      const initialCapital = parseFloat(config.initial_capital || defaultConfig.initial_capital);
+      const ownerName = config.owner_name || defaultConfig.owner_name;
+      
+      const transactions = allRecords.filter(r => r.type === 'transaction');
+      const expenses = allRecords.filter(r => r.type === 'expense');
+      
+      const totalRevenue = transactions.reduce((sum, t) => sum + t.total_amount, 0);
+      const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+      const netIncome = totalRevenue - totalExpenses;
+      
+      const withdrawals = 0;
+      const endingCapital = initialCapital + netIncome - withdrawals;
+
+      const html = `
+        <div class="financial-row">
+          <span>Modal Awal - ${ownerName}</span>
+          <span style="font-weight: 600;">Rp ${initialCapital.toLocaleString('id-ID')}</span>
+        </div>
+        <div class="financial-row">
+          <span>Laba Bersih Periode Berjalan</span>
+          <span style="font-weight: 600; color: ${netIncome >= 0 ? '#10b981' : '#ef4444'};">Rp ${netIncome.toLocaleString('id-ID')}</span>
+        </div>
+        <div class="financial-row">
+          <span>Prive/Penarikan Modal</span>
+          <span style="font-weight: 600; color: #ef4444;">Rp ${withdrawals.toLocaleString('id-ID')}</span>
+        </div>
+        <div class="financial-row bold" style="background: #d1fae5; padding: 1rem; border-radius: 8px; font-size: 1.1rem;">
+          <span>Modal Akhir - ${ownerName}</span>
+          <span style="color: #065f46;">Rp ${endingCapital.toLocaleString('id-ID')}</span>
+        </div>
+      `;
+
+      document.getElementById('equity-statement-content').innerHTML = html;
+    }
+
+    function updateBalanceSheet() {
+      const initialCapital = parseFloat(config.initial_capital || defaultConfig.initial_capital);
+      const ownerName = config.owner_name || defaultConfig.owner_name;
+      
+      const transactions = allRecords.filter(r => r.type === 'transaction');
+      const expenses = allRecords.filter(r => r.type === 'expense');
+      const assets = allRecords.filter(r => r.type === 'asset');
+      
+      const totalRevenue = transactions.reduce((sum, t) => sum + t.total_amount, 0);
+      const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+      const totalAssetPurchase = assets.reduce((sum, a) => sum + a.amount, 0);
+      const netIncome = totalRevenue - totalExpenses;
+      
+      const kas = initialCapital + totalRevenue - totalExpenses - totalAssetPurchase;
+      const piutang = transactions.filter(t => t.payment_status === 'belum lunas').reduce((sum, t) => sum + t.total_amount, 0);
+      const perlengkapan = assets.filter(a => a.service_type === 'Perlengkapan').reduce((sum, a) => sum + a.amount, 0);
+      const peralatan = assets.filter(a => a.service_type === 'Peralatan').reduce((sum, a) => sum + a.amount, 0);
+      
+      const totalAssets = kas + piutang + perlengkapan + peralatan;
+      
+      const utangUsaha = 0;
+      const utangBank = 0;
+      const totalLiabilities = utangUsaha + utangBank;
+      
+      const modalAkhir = initialCapital + netIncome;
+      const totalEquity = modalAkhir;
+      
+      const totalLiabilitiesEquity = totalLiabilities + totalEquity;
+
+      const html = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; color: #334155; text-align: center; background: #e0e7ff; padding: 0.75rem; border-radius: 8px;">ASET</div>
+            
+            <div style="font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #64748b;">Aset Lancar:</div>
+            <div class="financial-row">
+              <span>Kas</span>
+              <span style="font-weight: 600;">Rp ${kas.toLocaleString('id-ID')}</span>
+            </div>
+            <div class="financial-row">
+              <span>Piutang Usaha</span>
+              <span style="font-weight: 600;">Rp ${piutang.toLocaleString('id-ID')}</span>
+            </div>
+            <div class="financial-row">
+              <span>Perlengkapan</span>
+              <span style="font-weight: 600;">Rp ${perlengkapan.toLocaleString('id-ID')}</span>
+            </div>
+            
+            <div style="font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #64748b;">Aset Tetap:</div>
+            <div class="financial-row">
+              <span>Peralatan Laundry</span>
+              <span style="font-weight: 600;">Rp ${peralatan.toLocaleString('id-ID')}</span>
+            </div>
+            
+            <div class="financial-row bold" style="background: #dbeafe; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+              <span>TOTAL ASET</span>
+              <span style="color: #1e40af;">Rp ${totalAssets.toLocaleString('id-ID')}</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; color: #334155; text-align: center; background: #fed7aa; padding: 0.75rem; border-radius: 8px;">LIABILITAS & EKUITAS</div>
+            
+            <div style="font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #64748b;">Liabilitas Jangka Pendek:</div>
+            <div class="financial-row">
+              <span>Utang Usaha</span>
+              <span style="font-weight: 600;">Rp ${utangUsaha.toLocaleString('id-ID')}</span>
+            </div>
+            
+            <div style="font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #64748b;">Liabilitas Jangka Panjang:</div>
+            <div class="financial-row">
+              <span>Utang Bank</span>
+              <span style="font-weight: 600;">Rp ${utangBank.toLocaleString('id-ID')}</span>
+            </div>
+            
+            <div class="financial-row bold" style="margin-top: 0.5rem;">
+              <span>Total Liabilitas</span>
+              <span>Rp ${totalLiabilities.toLocaleString('id-ID')}</span>
+            </div>
+            
+            <div style="font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #64748b;">Ekuitas:</div>
+            <div class="financial-row">
+              <span>Modal - ${ownerName}</span>
+              <span style="font-weight: 600;">Rp ${modalAkhir.toLocaleString('id-ID')}</span>
+            </div>
+            
+            <div class="financial-row bold" style="margin-top: 0.5rem;">
+              <span>Total Ekuitas</span>
+              <span>Rp ${totalEquity.toLocaleString('id-ID')}</span>
+            </div>
+            
+            <div class="financial-row bold" style="background: #d1fae5; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+              <span>TOTAL LIABILITAS & EKUITAS</span>
+              <span style="color: #065f46;">Rp ${totalLiabilitiesEquity.toLocaleString('id-ID')}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('balance-sheet-content').innerHTML = html;
+    }
+
+    async function generatePDF() {
+      const statusDiv = document.getElementById('download-status');
+      statusDiv.innerHTML = '<div class="loading-spinner" style="border-color: #667eea; border-top-color: transparent; width: 2rem; height: 2rem; margin: 0 auto;"></div><div style="margin-top: 1rem;">Membuat PDF...</div>';
+
+      setTimeout(() => {
+        try {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          
+          const companyName = (config.business_name || defaultConfig.business_name).toUpperCase();
+          const ownerName = config.owner_name || defaultConfig.owner_name;
+          const initialCapital = parseFloat(config.initial_capital || defaultConfig.initial_capital);
+          
+          const transactions = allRecords.filter(r => r.type === 'transaction');
+          const expenses = allRecords.filter(r => r.type === 'expense');
+          
+          const totalRevenue = transactions.reduce((sum, t) => sum + t.total_amount, 0);
+          const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+          const netIncome = totalRevenue - totalExpenses;
+          
+          let yPos = 20;
+          
+          // Page 1: Jurnal Umum
+          doc.setFontSize(16);
+          doc.setFont(undefined, 'bold');
+          doc.text(companyName, 105, yPos, { align: 'center' });
+          yPos += 7;
+          doc.setFontSize(14);
+          doc.text('JURNAL UMUM', 105, yPos, { align: 'center' });
+          yPos += 5;
+          doc.setFontSize(10);
+          doc.setFont(undefined, 'normal');
+          doc.text('Periode: Tahun 2024', 105, yPos, { align: 'center' });
+          yPos += 10;
+
+          const journalData = allRecords.map(r => {
+            const date = new Date(r.transaction_date);
+            return [
+              date.toLocaleDateString('id-ID'),
+              r.description.substring(0, 40),
+              r.account_debit,
+              r.account_credit,
+              'Rp ' + r.amount.toLocaleString('id-ID'),
+              'Rp ' + r.amount.toLocaleString('id-ID')
+            ];
+          });
+
+          doc.autoTable({
+            startY: yPos,
+            head: [['Tanggal', 'Keterangan', 'Debit', 'Kredit', 'Jumlah Debit', 'Jumlah Kredit']],
+            body: journalData,
+            theme: 'grid',
+            headStyles: { fillColor: [102, 126, 234], fontSize: 9 },
+            bodyStyles: { fontSize: 8 },
+            columnStyles: {
+              0: { cellWidth: 25 },
+              1: { cellWidth: 45 },
+              2: { cellWidth: 35 },
+              3: { cellWidth: 35 },
+              4: { cellWidth: 25, halign: 'right' },
+              5: { cellWidth: 25, halign: 'right' }
+            }
+          });
+
+          // Page 2: Laba Rugi
+          doc.addPage();
+          yPos = 20;
+          doc.setFontSize(16);
+          doc.setFont(undefined, 'bold');
+          doc.text(companyName, 105, yPos, { align: 'center' });
+          yPos += 7;
+          doc.setFontSize(14);
+          doc.text('LAPORAN LABA RUGI', 105, yPos, { align: 'center' });
+          yPos += 5;
+          doc.setFontSize(10);
+          doc.setFont(undefined, 'normal');
+          doc.text('Periode: Tahun 2024', 105, yPos, { align: 'center' });
+          yPos += 15;
+
+          doc.setFont(undefined, 'bold');
+          doc.text('PENDAPATAN', 20, yPos);
+          yPos += 7;
+          doc.setFont(undefined, 'normal');
+          doc.text('Pendapatan Jasa Laundry', 25, yPos);
+          doc.text('Rp ' + totalRevenue.toLocaleString('id-ID'), 190, yPos, { align: 'right' });
+          yPos += 7;
+          doc.setFont(undefined, 'bold');
+          doc.text('Total Pendapatan', 25, yPos);
+          doc.text('Rp ' + totalRevenue.toLocaleString('id-ID'), 190, yPos, { align: 'right' });
+          yPos += 12;
+
+          doc.text('BEBAN OPERASIONAL', 20, yPos);
+          yPos += 7;
+          doc.setFont(undefined, 'normal');
+          
+          const expensesByCategory = {};
+          expenses.forEach(e => {
+            expensesByCategory[e.category] = (expensesByCategory[e.category] || 0) + e.amount;
+          });
+
+          Object.entries(expensesByCategory).forEach(([category, amount]) => {
+            doc.text(category, 25, yPos);
+            doc.text('Rp ' + amount.toLocaleString('id-ID'), 190, yPos, { align: 'right' });
+            yPos += 7;
+          });
+
+          doc.setFont(undefined, 'bold');
+          doc.text('Total Beban', 25, yPos);
+          doc.text('Rp ' + totalExpenses.toLocaleString('id-ID'), 190, yPos, { align: 'right' });
+          yPos += 12;
+
+          doc.setFontSize(12);
+          doc.text('LABA BERSIH', 20, yPos);
+          doc.text('Rp ' + netIncome.toLocaleString('id-ID'), 190, yPos, { align: 'right' });
+
+          // Page 3: Perubahan Modal
+          doc.addPage();
+          yPos = 20;
+          doc.setFontSize(16);
+          doc.setFont(undefined, 'bold');
+          doc.text(companyName, 105, yPos, { align: 'center' });
+          yPos += 7;
+          doc.setFontSize(14);
+          doc.text('LAPORAN PERUBAHAN MODAL', 105, yPos, { align: 'center' });
+          yPos += 5;
+          doc.setFontSize(10);
+          doc.setFont(undefined, 'normal');
+          doc.text('Periode: Tahun 2024', 105, yPos, { align: 'center' });
+          yPos += 15;
+
+          const modalAkhir = initialCapital + netIncome;
+
+          doc.text('Modal Awal - ' + ownerName, 20, yPos);
+          doc.text('Rp ' + initialCapital.toLocaleString('id-ID'), 190, yPos, { align: 'right' });
+          yPos += 7;
+          doc.text('Laba Bersih Periode Berjalan', 20, yPos);
+          doc.text('Rp ' + netIncome.toLocaleString('id-ID'), 190, yPos, { align: 'right' });
+          yPos += 7;
+          doc.text('Prive/Penarikan Modal', 20, yPos);
+          doc.text('Rp 0', 190, yPos, { align: 'right' });
+          yPos += 10;
+          doc.setFont(undefined, 'bold');
+          doc.setFontSize(12);
+          doc.text('Modal Akhir - ' + ownerName, 20, yPos);
+          doc.text('Rp ' + modalAkhir.toLocaleString('id-ID'), 190, yPos, { align: 'right' });
+
+          // Page 4: Neraca
+          doc.addPage();
+          yPos = 20;
+          doc.setFontSize(16);
+          doc.setFont(undefined, 'bold');
+          doc.text(companyName, 105, yPos, { align: 'center' });
+          yPos += 7;
+          doc.setFontSize(14);
+          doc.text('NERACA (LAPORAN POSISI KEUANGAN)', 105, yPos, { align: 'center' });
+          yPos += 5;
+          doc.setFontSize(10);
+          doc.setFont(undefined, 'normal');
+          doc.text('Per 31 Desember 2024', 105, yPos, { align: 'center' });
+          yPos += 15;
+
+          const kas = initialCapital + totalRevenue - totalExpenses;
+          const piutang = transactions.filter(t => t.payment_status === 'belum lunas').reduce((sum, t) => sum + t.total_amount, 0);
+          const totalAssets = kas + piutang;
+          const totalEquity = modalAkhir;
+
+          doc.setFont(undefined, 'bold');
+          doc.setFontSize(11);
+          doc.text('ASET', 20, yPos);
+          yPos += 7;
+          doc.setFontSize(10);
+          doc.setFont(undefined, 'normal');
+          doc.text('Aset Lancar:', 20, yPos);
+          yPos += 6;
+          doc.text('  Kas', 25, yPos);
+          doc.text('Rp ' + kas.toLocaleString('id-ID'), 100, yPos, { align: 'right' });
+          yPos += 6;
+          doc.text('  Piutang Usaha', 25, yPos);
+          doc.text('Rp ' + piutang.toLocaleString('id-ID'), 100, yPos, { align: 'right' });
+          yPos += 8;
+          doc.setFont(undefined, 'bold');
+          doc.text('Total Aset', 25, yPos);
+          doc.text('Rp ' + totalAssets.toLocaleString('id-ID'), 100, yPos, { align: 'right' });
+          yPos += 15;
+
+          doc.setFontSize(11);
+          doc.text('LIABILITAS & EKUITAS', 20, yPos);
+          yPos += 7;
+          doc.setFontSize(10);
+          doc.setFont(undefined, 'normal');
+          doc.text('Liabilitas:', 20, yPos);
+          yPos += 6;
+          doc.text('  Utang Usaha', 25, yPos);
+          doc.text('Rp 0', 100, yPos, { align: 'right' });
+          yPos += 8;
+          doc.text('Ekuitas:', 20, yPos);
+          yPos += 6;
+          doc.text('  Modal - ' + ownerName, 25, yPos);
+          doc.text('Rp ' + modalAkhir.toLocaleString('id-ID'), 100, yPos, { align: 'right' });
+          yPos += 8;
+          doc.setFont(undefined, 'bold');
+          doc.text('Total Liabilitas & Ekuitas', 25, yPos);
+          doc.text('Rp ' + totalEquity.toLocaleString('id-ID'), 100, yPos, { align: 'right' });
+
+          const filename = `Laporan_Keuangan_${companyName.replace(/\s/g, '_')}_${new Date().getTime()}.pdf`;
+          doc.save(filename);
+
+          statusDiv.innerHTML = '<div style="color: #10b981; font-weight: 600; font-size: 1.1rem;">✓ PDF berhasil diunduh!</div><div style="margin-top: 0.5rem; color: #64748b;">File tersimpan di folder Downloads Anda</div>';
+          showToast('Laporan berhasil diunduh!', 'success');
+        } catch (error) {
+          statusDiv.innerHTML = '<div style="color: #ef4444; font-weight: 600;">✕ Gagal membuat PDF</div>';
+          showToast('Gagal membuat PDF', 'error');
+        }
+      }, 500);
+    }
+
+    async function handleDelete(record) {
+      if (isLoading) return;
+      isLoading = true;
+
+      const result = await window.dataSdk.delete(record);
+      isLoading = false;
+
+      if (result.isOk) {
+        showToast('Data berhasil dihapus', 'success');
+      } else {
+        showToast('Gagal menghapus data', 'error');
+      }
+    }
+
+    function setLoading(btnId, loading) {
+      isLoading = loading;
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        if (loading) {
+          btn.disabled = true;
+          btn.innerHTML = '<span class="loading-spinner"></span> Menyimpan...';
+        } else {
+          btn.disabled = false;
+          if (btnId === 'submit-btn') {
+            btn.innerHTML = 'Simpan Transaksi';
+          } else if (btnId === 'expense-submit-btn') {
+            btn.innerHTML = 'Simpan Pengeluaran';
+          } else if (btnId === 'asset-submit-btn') {
+            btn.innerHTML = 'Simpan Pembelian Aset';
+          }
+        }
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) {
+        existingToast.remove();
+      }
+
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.style.borderLeft = `4px solid ${type === 'success' ? '#10b981' : '#ef4444'}`;
+      toast.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="font-size: 1.25rem;">${type === 'success' ? '✓' : '✕'}</div>
+          <div style="font-weight: 600; color: #334155;">${message}</div>
+        </div>
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+      initializeApp();
+    }
+  </script>
+</script>
+  <!--
+    NOTE: Removed a Cloudflare/challenge iframe injector that was appended to the file.
+    That iframe/script can prevent local execution of the page and appears unrelated to application logic.
+  -->
+</body>
+</html>
+</html>
